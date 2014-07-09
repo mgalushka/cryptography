@@ -1,6 +1,4 @@
-package com.maximgalushka.cryptography;
-
-import java.util.Arrays;
+package com.maximgalushka.cryptography.week1;
 
 /**
  * @since 7/9/2014.

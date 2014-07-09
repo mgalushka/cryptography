@@ -1,4 +1,4 @@
-package com.maximgalushka.cryptography
+package com.maximgalushka.cryptography.week1
 
 /**
  * @since 7/4/2014.
