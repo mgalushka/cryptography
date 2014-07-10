@@ -1,36 +1,14 @@
 package com.maximgalushka.cryptography.week1;
 
+import static com.maximgalushka.cryptography.Tools.*;
+
 /**
  * @since 7/9/2014.
  */
 public class CharsOps {
 
-    public char xor(char a, char b) {
-        return (char) (a ^ b);
-    }
-
-    public char[] xor(char[] a, char[] b) {
-        int min = Math.min(a.length, b.length);
-        char[] result = new char[min];
-        for (int i = 0; i < min; i++) {
-            result[i] = xor(a[i], b[i]);
-        }
-        return result;
-    }
-
     public String toString(String encoded) {
         return new String(chars(encoded));
-    }
-
-    public char[] chars(String encoded) {
-        int L = encoded.length();
-        char[] result = new char[L / 2];
-        for (int i = 0; i < L; i += 2) {
-            String digits = encoded.substring(i, i + 2);
-            char val = (char) Integer.parseInt(digits, 16);
-            result[i / 2] = val;
-        }
-        return result;
     }
 
     public String print(char[] string) {
@@ -42,22 +20,6 @@ public class CharsOps {
                 sb.append(String.valueOf(c));
             } else {
                 sb.append(Integer.toHexString((int) c));
-            }
-            sb.append("\t");
-        }
-        sb.append("");
-        return sb.toString();
-    }
-
-    public String printSpaces(char[] string) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("");
-        for (char c : string) {
-            sb.append("");
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-                sb.append(String.valueOf(c));
-            } else {
-                sb.append(" ");
             }
             sb.append("\t");
         }
@@ -147,16 +109,16 @@ public class CharsOps {
         //ops.process();
 
         char[] target = XE.toCharArray();
-        char[] encrypted = ops.chars(X);
-        char[] cipher = ops.xor(target, encrypted);
-        char[] cipher2 = ops.xor(ops.chars(T4), E4.toCharArray());
+        char[] encrypted = chars(X);
+        char[] cipher = xor(target, encrypted);
+        char[] cipher2 = xor(chars(T4), E4.toCharArray());
 
-        System.out.println(ops.printSpaces(ops.xor(ops.chars(X), cipher2)));
-        System.out.println(ops.printSpaces(ops.xor(ops.chars(X), cipher)));
+        System.out.println(printSpaces(xor(chars(X), cipher2)));
+        System.out.println(printSpaces(xor(chars(X), cipher)));
 
         for (int i = 0; i < T.length; i++) {
-            System.out.println(ops.printSpaces(ops.xor(ops.chars(T[i]), cipher)));
-            System.out.println(ops.printSpaces(ops.xor(ops.chars(T[i]), cipher2)));
+            System.out.println(printSpaces(xor(chars(T[i]), cipher)));
+            System.out.println(printSpaces(xor(chars(T[i]), cipher2)));
         }
 
         /*
