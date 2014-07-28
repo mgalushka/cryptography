@@ -3,6 +3,7 @@ package com.maximgalushka.cryptography.week4;
 import com.maximgalushka.http.HttpCallbackHandler;
 import com.maximgalushka.http.HttpHelper;
 import com.maximgalushka.http.NoAuthSessionClient;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -11,13 +12,15 @@ import java.io.File;
  */
 public class Request {
 
+    private static final Logger log = Logger.getLogger(Request.class);
+
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         NoAuthSessionClient client = new NoAuthSessionClient("crypto-class.appspot.com", 80, "http");
         HttpHelper helper = new HttpHelper<String>(client.getNewSessionClient());
 
         final String url = String.format("/po?er=%s", "");
-        helper.get(url,
+        int status = helper.status(url,
                 client.getTargetHost(),
                 new HttpCallbackHandler<String>() {
                     @Override
@@ -26,6 +29,6 @@ public class Request {
                         return null;
                     }
                 });
-
+        log.debug(String.format("status = %d", status));
     }
 }

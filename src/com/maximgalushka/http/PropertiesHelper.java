@@ -15,7 +15,7 @@ public class PropertiesHelper {
     private PropertiesHelper()  {
         try {
             properties = new Properties();
-            properties.load(PropertiesHelper.class.getResourceAsStream("/settings.properties"));
+            properties.load(PropertiesHelper.class.getResourceAsStream("/resources.properties"));
         } catch (IOException e) {
             log.fatal("Properties loading failure");
         }

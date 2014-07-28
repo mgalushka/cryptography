@@ -6,6 +6,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import java.io.OutputStream;
  * @author Maxim Galushka
  * @since 07/09/2011
  */
-public class HttpHelper <T>{
+public class HttpHelper<T> {
 
     private static final Logger log = Logger.getLogger(HttpHelper.class);
 
@@ -44,6 +45,22 @@ public class HttpHelper <T>{
 
     public T get(String url, HttpHost host, HttpCallbackHandler<T> callback) throws Exception {
         return get(url, host, callback, "utf-8");
+    }
+
+    public int status(String url, HttpHost host, HttpCallbackHandler<T> callback)
+            throws Exception {
+
+        log.debug(String.format("Prepare to execute get status request: [%s]", url));
+        HttpGet get = new HttpGet(url);
+        HttpResponse response = httpClient.execute(host, get);
+        HttpEntity entity = response.getEntity();
+
+        int status = response.getStatusLine().getStatusCode();
+
+        String content = IOUtils.convertStreamToString(entity.getContent(), "utf-8");
+        log.trace(String.format("Retrieved content: %s", content));
+
+        return status;
     }
 
     public T download(String url, HttpHost host, File to, HttpCallbackHandler<T> callback)
