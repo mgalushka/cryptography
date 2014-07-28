@@ -22,12 +22,12 @@ public class NoAuthSessionClient extends SessionSupport {
 
     @Override
     protected void buildBasicCookies(DefaultHttpClient httpClient) {
-        log.debug(String.format("Session creation is not required for %s site", getTargetHost()));
+        log.trace(String.format("Session creation is not required for %s site", getTargetHost()));
     }
 
     @Override
     protected DefaultHttpClient buildSessionClient(DefaultHttpClient client) throws IOException {
-        log.debug(String.format("Session creation is not required for %s site", getTargetHost()));
+        log.trace(String.format("Session creation is not required for %s site", getTargetHost()));
         return client;
     }
 }
