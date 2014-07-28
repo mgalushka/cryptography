@@ -53,6 +53,18 @@ public final class Tools {
         return sb.toString();
     }
 
+    public static String encoded_raw(byte[] string) {
+        StringBuilder sb = new StringBuilder();
+        for (byte c : string) {
+            sb.append("");
+            String r = Integer.toHexString(c & 0xFF);
+            if (r.length() == 1) r = "0" + r;
+            sb.append(r);
+            sb.append("");
+        }
+        return sb.toString();
+    }
+
     public static char xor(char a, char b) {
         return (char) (a ^ b);
     }

@@ -47,10 +47,10 @@ public class HttpHelper<T> {
         return get(url, host, callback, "utf-8");
     }
 
-    public int status(String url, HttpHost host, HttpCallbackHandler<T> callback)
+    public int status(String url, HttpHost host)
             throws Exception {
 
-        log.debug(String.format("Prepare to execute get status request: [%s]", url));
+        log.trace(String.format("Prepare to execute get status request: [%s]", url));
         HttpGet get = new HttpGet(url);
         HttpResponse response = httpClient.execute(host, get);
         HttpEntity entity = response.getEntity();
