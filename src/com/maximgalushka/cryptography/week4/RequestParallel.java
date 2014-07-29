@@ -64,7 +64,7 @@ public class RequestParallel {
         byte[] decoded = new byte[16];
         boolean fail = false;
 
-        ExecutorService es = Executors.newFixedThreadPool(16);
+        ExecutorService es = Executors.newFixedThreadPool(4);
 
         for (int interestingByte = 0; interestingByte < 16; interestingByte++) {
             if (fail) {
