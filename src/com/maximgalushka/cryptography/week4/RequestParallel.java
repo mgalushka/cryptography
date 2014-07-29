@@ -20,8 +20,8 @@ public class RequestParallel {
     private static final Logger log = Logger.getLogger(Request_0.class);
 
     protected static Map<Integer, byte[]> pads() {
-        Map<Integer, byte[]> pads = new HashMap<Integer, byte[]>((int) Math.ceil(16 * 0.75) + 1);
-        for (int i = 1; i <= 16; i++) {
+        Map<Integer, byte[]> pads = new HashMap<Integer, byte[]>((int) Math.ceil(64 * 0.75) + 1);
+        for (int i = 1; i <= 64; i++) {
             byte[] bts = new byte[i];
             Arrays.fill(bts, (byte) i);
             pads.put(i, bts);
@@ -49,8 +49,12 @@ public class RequestParallel {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
+        // The Magic Words are Squeamish Ossifrage
         String M = "f20bdba6ff29eed7b046d1df9fb7000058b1ffb4210a580f748b4ac714c001bd4a61044426fb515dad3f21f18aa577c0bdf302936266926ff37dbf7035d5eeb4";
-        byte[] full_bytes = bytes(M);
+        String M1 = "f20bdba6ff29eed7b046d1df9fb7000058b1ffb4210a580f748b4ac714c001bd4a61044426fb515dad3f21f18aa577c0";
+        String M2 = "f20bdba6ff29eed7b046d1df9fb7000058b1ffb4210a580f748b4ac714c001bd";
+        String M3 = "58b1ffb4210a580f748b4ac714c001bdf20bdba6ff29eed7b046d1df9fb70000";
+        byte[] full_bytes = bytes(M3);
 
         log.debug(Tools.encoded0(full_bytes));
 
@@ -61,7 +65,19 @@ public class RequestParallel {
 
         int L = bytes.length;
         Map<Integer, byte[]> pads = pads();
-        byte[] decoded = new byte[16];
+        byte[] decoded0 = new byte[]{
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09
+        };
+
+        byte[] decoded = new byte[]{
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        };
         boolean fail = false;
 
         ExecutorService es = Executors.newFixedThreadPool(4);
@@ -83,7 +99,7 @@ public class RequestParallel {
                 if (bt.length != pad.length) throw new RuntimeException("Incorrect size!");
                 bt = xor(bt, pad);
 
-                byte[] encoded_part = Arrays.copyOfRange(decoded, 15 - interestingByte, 16);
+                byte[] encoded_part = Arrays.copyOfRange(decoded, decoded.length - 1 - interestingByte, 64);
                 if (bt.length != encoded_part.length) throw new RuntimeException("Incorrect size!");
                 bt = xor(bt, encoded_part);
 
@@ -105,23 +121,25 @@ public class RequestParallel {
             for (Integer guess : tasks.keySet()) {
                 int status = tasks.get(guess).get();
                 if (status == 404) {
-                    log.debug(String.format("(byte=%d) (guess=%d) = %d", interestingByte + 1, guess, status));
+                    log.debug(String.format("(byte=%d) (guess=%d: %c) = %d", interestingByte + 1, guess, Character.toChars(guess)[0], status));
                     byte guessBt = guess.byteValue();
-                    decoded[15 - interestingByte] = guessBt;
-                    //bytes[L - 17 - interestingByte] = guessBt;
-                    log.debug(String.format("bytes=[%s]", Tools.encoded_raw(bytes)));
+                    decoded[decoded.length - 1 - interestingByte] = guessBt;
+                    log.debug(String.format("decoded=[%s]", Tools.encoded_raw(decoded)));
+                    log.debug(String.format("decoded=[%s]", Tools.printSpaces(decoded)));
                     fail = false;
                     break;
                 } else {
-                    log.debug(String.format("incorrect guess=%d", guess));
+                    log.trace(String.format("incorrect guess=%d", guess));
                 }
             }
         }
-        if (!fail) {
-            System.out.println(Arrays.toString(decoded));
-            System.out.println(printSpaces(decoded));
-            System.out.println(printSpaces(bytes));
+        if (fail) {
+            log.error(String.format("FAIL"));
         }
+        log.debug(Arrays.toString(decoded));
+        log.debug(printSpaces(decoded));
+        log.debug(printSpaces(bytes));
+
         es.shutdownNow();
         es.awaitTermination(1, TimeUnit.SECONDS);
     }
