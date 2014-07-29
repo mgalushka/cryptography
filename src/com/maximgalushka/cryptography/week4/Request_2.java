@@ -23,16 +23,14 @@ public class Request_2 {
         int L = bytes.length;
 
         // set correct byte
-        bytes[L - 17] = 0x09;
-        bytes[L - 18] = (byte) 195;
+        bytes[L - 17] = (byte) (bytes[L - 17] ^ 0x09 ^ 0x03);
+        bytes[L - 18] = (byte) (bytes[L - 18] ^ 0x09 ^ 0x03);
 
         for (int guess = 0; guess <= 255; guess++) {
             byte[] copy = new byte[L];
             System.arraycopy(bytes, 0, copy, 0, L);
 
             copy[L - 19] = (byte) (bytes[L - 19] ^ guess ^ (byte) 0x03);
-            copy[L - 18] = (byte) (bytes[L - 18] ^ guess ^ (byte) 0x03);
-            copy[L - 17] = (byte) (bytes[L - 17] ^ guess ^ (byte) 0x03);
 
             String m = encoded_raw(copy);
             final String url = String.format("/po?er=%s", m);
